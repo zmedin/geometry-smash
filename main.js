@@ -437,7 +437,7 @@ var drawObstacles = function() {
        * (2) Does it always work?
        */
       if (hero.x + hero.w > obs_left &&
-        hero.y > obs_top) {
+        hero.y > obs_top && hero.y + hero.h < obs_y) {0220       
         drawGameOverSign();
       }
     } else {
