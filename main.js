@@ -103,11 +103,16 @@ let obstacleSaw = {
 
       ctx.restore();
     }
+
+    this.y_shift = sawHeight-290;
   },
   x: -80,
   y: 0,
   w: 160,
-  h: -160
+  h: -160,
+  shift: true,
+  x_shift: -80,
+  y_shift: 0
 };
 
 let obstacleThorns = {
@@ -432,24 +437,30 @@ let drawFloor = function() {
 };
 
 let drawBoundingBox = function(obstacle) {
+  var obj_x = obstacle.x;
+  var obj_y = obstacle.y;
+  if (obstacle.shift) {
+    obj_x += obstacle.x_shift;
+    obj_y += obstacle.y_shift;
+  }
   ctx.strokeStyle = "orangered";
   ctx.lineWidth = 1;
-  ctx.strokeRect(obstacle.x, obstacle.y, obstacle.w, obstacle.h);
+  ctx.strokeRect(obj_x, obj_y, obstacle.w, obstacle.h);
 
   ctx.font = '14px monospace';
   ctx.fillStyle = "white";
   ctx.textAlign = "right";
   ctx.textBaseline = "top";
-  ctx.fillText("(x, y)", obstacle.x, obstacle.y);
+  ctx.fillText("(x, y)", obj_x, obj_y);
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("(x + w, y)", obstacle.x + obstacle.w, obstacle.y);
+  ctx.fillText("(x + w, y)", obj_x + obstacle.w, obj_y);
   ctx.textAlign = "left";
   ctx.textBaseline = "bottom";
-  ctx.fillText("(x + w, y + h)", obstacle.x + obstacle.w, obstacle.y + obstacle.h);
+  ctx.fillText("(x + w, y + h)", obj_x + obstacle.w, obj_y + obstacle.h);
   ctx.textAlign = "right";
   ctx.textBaseline = "bottom";
-  ctx.fillText("(x, y + h)", obstacle.x, obstacle.y + obstacle.h);
+  ctx.fillText("(x, y + h)", obj_x, obj_y + obstacle.h);
 
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
@@ -469,10 +480,19 @@ let is_overlapping = function(object1, object2) {
   if (object2.ignore_me) {
     return false;
   }
-  if (object1.x + object1.w > object2.x &&
-    object1.y > object2.y + object2.h &&
-    object1.x < object2.x + object2.w &&
-    object1.y + object1.h < object2.y) {
+
+  var obj_x=object2.x;
+  var obj_y=object2.y;
+
+  if (object2.shift) {
+    obj_x += object2.x_shift;
+    obj_y += object2.y_shift;
+  }
+
+  if (object1.x + object1.w > obj_x &&
+    object1.y > obj_y + object2.h &&
+    object1.x < obj_x + object2.w &&
+    object1.y + object1.h < obj_y) {
     return true;
   }
   return false;
